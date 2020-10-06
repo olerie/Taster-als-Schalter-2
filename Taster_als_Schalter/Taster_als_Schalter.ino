@@ -1,7 +1,7 @@
 /*
   Funktion:
   Programierer: Ole Riehemann
-  letzte Änderung: 04.10.2020
+  letzte Änderung: 06.10.2020
   Version: 0.0.1
 
   Hardware:
@@ -24,12 +24,12 @@ void setup()
 
 void loop()
 {
-  taster.tick();
+  taster.tick();    // beobachtung ob taster gedrückt wird
 
   delay(10);
 
   {
-    if (statusLed == HIGH)
+    if (statusLed == HIGH)         // Funktion für LED anschalten
     {
       digitalWrite(LED, LOW);
       Serial.println("LED AUS");
@@ -44,12 +44,5 @@ void loop()
 
 void Funktion_Taster()
 {
-  if (statusLed == HIGH)
-  {
-    statusLed = 0;
-  }
-  else
-  {
-    statusLed = 1;
-  }
+  statusLed = !statusLed;
 }
