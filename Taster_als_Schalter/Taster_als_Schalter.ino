@@ -9,17 +9,15 @@
 */
 
 #include <OneButton.h>
-OneButton taster(2, true);
+OneButton taster(2, false);        // interner PullDown nicht mehr gesetzt
 #define LED 13
-boolean statusLed;
+boolean statusLed = false;  // beim einschalten ist der Merker nicht gesetzt
 
 void setup()
 {
   pinMode(13, OUTPUT);
 
   taster.attachClick(Funktion_Taster);
-  Serial.begin(9600);
-
 }
 
 void loop()
@@ -27,22 +25,11 @@ void loop()
   taster.tick();    // beobachtung ob taster gedrückt wird
 
   delay(10);
-
-  {
-    if (statusLed == HIGH)         // Funktion für LED anschalten
-    {
-      digitalWrite(LED, LOW);
-      Serial.println("LED AUS");
-    }
-    else
-    {
-      digitalWrite(LED, HIGH);
-      Serial.println("LED AN");
-    }
-  }
+  
+  digitalWrite(LED, statusLed);       // Zuweisung Led = Merker
 }
 
 void Funktion_Taster()
 {
-  statusLed = !statusLed;
-}
+  statusLed = !statusLed;                // Auszuführende Funktion (Merker wird gedreht) 
+}                                        // möglichst wenig Code bzw. nur Merker wenn nicht anders geht
