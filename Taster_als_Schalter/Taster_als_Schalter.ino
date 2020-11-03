@@ -12,24 +12,17 @@
 OneButton taster(10, false);        // mit "false" wird der interne PullDown nicht mehr gesetzt
 
 /*********************Einstellung Bibliothek*****************/
+long unsigned int start;            // Startwert des Zählers
+long unsigned int intervall = 150;   // wechselzeit der LEDs
+boolean statusLed = false;          // durch "false" wird beim einschalten der Merker nicht gesetzt
+boolean merkerMillis = false;
+byte led [9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+byte zaehler;
 
-boolean statusLed = false;  // beim einschalten ist der Merker nicht gesetzt
-
-byte led[8] = {2, 3, 4, 5, 6, 7, 8, 9};    //definierung der 2D for Schleife
-byte ledZustand [9] [8] = {
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {1, 0, 0, 0, 0, 0, 0, 0},
-  {1, 1, 0, 0, 0, 0, 0, 0},
-  {1, 1, 1, 0, 0, 0, 0, 0},
-  {1, 1, 1, 1, 0, 0, 0, 0},
-  {1, 1, 1, 1, 1, 0, 0, 0},
-  {1, 1, 1, 1, 1, 1, 0, 0},
-  {1, 1, 1, 1, 1, 1, 1, 0},
-  {1, 1, 1, 1, 1, 1, 1, 1},
-};
 void setup()
 {
   taster.attachClick(Funktion_Taster);
+  Serial.begin(9600);
 
   for (byte i = 0; i < 9; i++)
   {
@@ -40,25 +33,40 @@ void setup()
 void loop()
 {
   taster.tick();    // beobachtung ob taster gedrückt wird
-
   delay(10);
+
   {
     if (statusLed == true)
     {
-      for (byte i = 0; i < 9; i++) //Zeilen           // Äußere For Schleife
-      {
-        for (byte j = 0; j < 8; j++)  //Spalten       // Innere For Schleife
-        {
-          digitalWrite(led[j], ledZustand[i][j]);
-        }
-        delay(80);                                   // Verzögerung der Einzelnen LEDs
-      }
+      Serial.println("Taster gedrueckt");         // ueberpruefung ob Signal kommt
 
+      if ((millis() - start) >= intervall)        // blink takt
+      {
+        Serial.println("Takt");                   // Signalueberpruefung
+        start = millis();
+
+        digitalWrite(led[zaehler], LOW);
+        digitalWrite(led[zaehler + 1], HIGH);
+        zaehler ++;
+
+        if (zaehler == 9)                      // zaehler wird nach jedem Lauf rückgesetzt
+        {
+          zaehler = 0;
+        }
+      }
+    }
+    else           // wenn Taster nicht gedrückt wird
+    {
+      for (byte i = 0; i < 9; i ++)            //Alle LEDs werden ausgeschaltet
+      {
+        digitalWrite(led[i], LOW);                           
+      }
+      zaehler = 0;
     }
   }
 }
 
 void Funktion_Taster()
 {
-  statusLed = !statusLed;                // Auszuführende Funktion (Merker wird gedreht)
+  statusLed = !statusLed;                // Auszuführende Funktion, wenn Taster gedrückt wird (Merker wird gedreht)
 }                                        // möglichst wenig Code bzw. nur Merker wenn es nicht anders geht
