@@ -15,6 +15,7 @@ OneButton taster(10, false);        // mit "false" wird der interne PullDown nic
 long unsigned int start;            // Startwert des Zählers
 long unsigned int intervall = 95;   // wechselzeit der LEDs
 boolean statusLed = false;          // durch "false" wird beim einschalten der Merker nicht gesetzt
+byte zeile = 0;                     // ersatzwert für erste Forschleife
 byte led [8] = {2, 3, 4, 5, 6, 7, 8, 9};
 byte ledZustand [9][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0},
@@ -27,7 +28,7 @@ byte ledZustand [9][8] = {
   {1, 1, 1, 1, 1, 1, 1, 0},
   {1, 1, 1, 1, 1, 1, 1, 1},
 };
-byte zeile = 0;
+
 
 void setup()
 {
@@ -62,7 +63,7 @@ void loop()
           }
           zeile++;  // nächste Zeile
 
-          if (zeile == 9)
+          if (zeile == 9)                      // Nullen des Zählwertes nach durchlauf
           {
             zeile = 0;
           }
