@@ -13,11 +13,21 @@ OneButton taster(10, false);        // mit "false" wird der interne PullDown nic
 
 /*********************Einstellung Bibliothek*****************/
 long unsigned int start;            // Startwert des Zählers
-long unsigned int intervall = 150;   // wechselzeit der LEDs
+long unsigned int intervall = 95;   // wechselzeit der LEDs
 boolean statusLed = false;          // durch "false" wird beim einschalten der Merker nicht gesetzt
-boolean merkerMillis = false;
-byte led [9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-byte zaehler;
+byte led [8] = {2, 3, 4, 5, 6, 7, 8, 9};
+byte ledZustand [9][8] = {
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 0, 0, 0, 0, 0, 0, 0},
+  {1, 1, 0, 0, 0, 0, 0, 0},
+  {1, 1, 1, 0, 0, 0, 0, 0},
+  {1, 1, 1, 1, 0, 0, 0, 0},
+  {1, 1, 1, 1, 1, 0, 0, 0},
+  {1, 1, 1, 1, 1, 1, 0, 0},
+  {1, 1, 1, 1, 1, 1, 1, 0},
+  {1, 1, 1, 1, 1, 1, 1, 1},
+};
+byte zeile = 0;
 
 void setup()
 {
@@ -44,24 +54,29 @@ void loop()
       {
         Serial.println("Takt");                   // Signalueberpruefung
         start = millis();
-
-        digitalWrite(led[zaehler], LOW);
-        digitalWrite(led[zaehler + 1], HIGH);
-        zaehler ++;
-
-        if (zaehler == 9)                      // zaehler wird nach jedem Lauf rückgesetzt
         {
-          zaehler = 0;
+          for (byte i = 0; i < 9; i++)         // Innere For Schleife
+          {
+            digitalWrite(led[i], ledZustand[zeile][i]);
+            Serial.println(zeile);             // ueberprüfung Zeilenwert
+          }
+          zeile++;  // nächste Zeile
+
+          if (zeile == 9)
+          {
+            zeile = 0;
+          }
+          
         }
       }
     }
-    else           // wenn Taster nicht gedrückt wird
+    else                                     // wenn Taster nicht gedrückt wird
     {
       for (byte i = 0; i < 9; i ++)            //Alle LEDs werden ausgeschaltet
       {
-        digitalWrite(led[i], LOW);                           
+        digitalWrite(led[i], LOW);
+        zeile = 0;
       }
-      zaehler = 0;
     }
   }
 }
